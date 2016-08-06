@@ -57,7 +57,11 @@ var collision = d3.dispatch('collideEvent');
 collision.on('collideEvent', function() {
   isCollision = true
   console.log('collision motherfucker!!');
-  setTimeout(function() { isCollision = false }, 2000);
+  player.style('fill', 'red');
+  player.transition().duration(2000).style('fill', 'black');
+  setTimeout(function() { 
+    isCollision = false 
+  }, 2000);
 });
 var isCollision = false;
 var detectCollision = function () {
