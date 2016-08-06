@@ -51,15 +51,11 @@ asteroids
   .attr('height', '50px')
   .attr('width', '50px');
 
-setInterval(function () {
-  d3
-    .selectAll('.update')
-    .data(getData(10))
-    .transition()
-    .duration(1000)
-    .attr('x', function(d) { return d.x; })
-    .attr('y', function(d) { return d.y; });
-}, 1000);
+
+var collision = d3.dispatch('collideEvent');
+collision.on('collideEvent', function() {
+  console.log('collision motherfucker!!');
+});
 
 var inCollision = false;
 var detectCollision = function () {
@@ -71,11 +67,20 @@ var detectCollision = function () {
   for (var i = 0; i < asteroidPositions.length; i++) {
     if (Math.sqrt(Math.pow(playerPosition[0] - asteroidPositions[i][0] + 25, 2) + Math.pow(playerPosition[1] - asteroidPositions[i][1] + 25, 2)) < 50) {
       inCollision = true;
-      console.log('collision motherfucker!!');
+      collision.collideEvent();
     }
   }
 };
 
 
+setInterval(function () {
+  d3
+    .selectAll('.update')
+    .data(getData(10))
+    .transition()
+    .duration(1000)
+    .attr('x', function(d) { return d.x; })
+    .attr('y', function(d) { return d.y; });
+}, 1000);
 
 setInterval(detectCollision, 50);
