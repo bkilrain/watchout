@@ -61,13 +61,21 @@ setInterval(function () {
     .attr('y', function(d) { return d.y; });
 }, 1000);
 
-var asteroidPositions = [];
-
+var inCollision = false;
 var detectCollision = function () {
+  var asteroidPositions = [];
   var cxs = d3.select('svg').selectAll('.update').each(function() {
-    asteroidPositions.push({ x: d3.select(this).attr('x'), y: d3.select(this).attr('y')});
+    asteroidPositions.push([d3.select(this).attr('x'), d3.select(this).attr('y')]);
   });
+  var playerPosition = [player.attr('cx'), player.attr('cy')];
+  for (var i = 0; i < asteroidPositions.length; i++) {
+    if (Math.sqrt(Math.pow(playerPosition[0] - asteroidPositions[i][0] + 25, 2) + Math.pow(playerPosition[1] - asteroidPositions[i][1] + 25, 2)) < 50) {
+      inCollision = true;
+      console.log('collision motherfucker!!');
+    }
+  }
 };
 
-detectCollision();
-console.log(asteroidPositions);
+
+
+setInterval(detectCollision, 50);
