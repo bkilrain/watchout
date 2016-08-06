@@ -1,6 +1,34 @@
-// start slingin' some d3 here.
-var data = [{ 'x': 198, 'y': 245 }, { 'x': 44, 'y': 174 }, { 'x': 470, 'y': 325 }, { 'x': 458, 'y': 42 }, { 'x': 51, 'y': 162 }];
-var asteroids = d3.select('svg').selectAll('image');
+var boxWidth = 500;
+var boxHeight = 400;
+
+var box = d3.select('body')
+              .append('svg')
+              .attr('class', 'box')
+              .attr('width', boxWidth)
+              .attr('height', boxHeight);
+
+var dragFunc = function() { 
+  player.attr('cx', d3.event.x)
+        .attr('cy', d3.event.y); 
+};
+
+var drag = d3.behavior.drag()
+             .on('drag', dragFunc);
+
+var player = box.selectAll('.player')
+                .data([{ x: (boxWidth / 2), y: (boxHeight / 2), r: 25 }])
+                .enter()
+                .append('svg:circle')
+                .attr('class', 'player')
+                .attr('cx', function(d) { return d.x; })
+                .attr('cy', function(d) { return d.y; })
+                .attr('r', function(d) { return d.r; })
+                .call(drag)
+                .style('fill', 'black');
+
+var asteroids = d3
+  .select('svg')
+  .selectAll('.update');
 
 var getData = function(n) {
   var result = [];
@@ -9,23 +37,37 @@ var getData = function(n) {
   }
   return result;
 };
-var getData1 = getData(10);
-var getData2 = getData(5);
 
 
-var t = d3.transition().duration(5000);//.ease(d3.easeLinear);
-asteroids.data(getData1, function (d) { return d.i; }).enter().append('image').attr('class', 'update').attr('xlink:href', './asteroid.png').attr('x', function(d) { return d.x; }).attr('y', function(d) { return d.y; }).attr('height', '50px').attr('width', '50px');
-// d3.select('svg').selectAll('circle').data(data).enter().append('circle').attr('cx', function(d) { return d.x; }).attr('cy', function(d) { return d.y; }).attr('height', '50px').attr('width', '50px');
 
-setInterval(function () { d3.selectAll('.update').data(getData(10)).transition().duration(1000).attr('x', function(d) { return d.x; }).attr('y', function(d) { return d.y; }); }, 1000);
+asteroids
+  .data(getData(10), function (d) { return d.i; })
+  .enter()
+  .append('image')
+  .attr('class', 'update')
+  .attr('xlink:href', './asteroid.png')
+  .attr('x', function(d) { return d.x; })
+  .attr('y', function(d) { return d.y; })
+  .attr('height', '50px')
+  .attr('width', '50px');
 
-//asteroids.data(getData(5)).enter().append('image').style('x', function(d) { return d.x; }).style('y', function(d) { return d.y; });
+setInterval(function () {
+  d3
+    .selectAll('.update')
+    .data(getData(10))
+    .transition()
+    .duration(1000)
+    .attr('x', function(d) { return d.x; })
+    .attr('y', function(d) { return d.y; });
+}, 1000);
 
+var asteroidPositions = [];
 
-// d3.select('svg').selectAll('circle').interval(function (d) {
-//   var randx = Math.floor(Math.random() * 500);
-//   var randy = Math.floor(Math.random() * 400);
+var detectCollision = function () {
+  var cxs = d3.select('svg').selectAll('.update').each(function() {
+    asteroidPositions.push({ x: d3.select(this).attr('x'), y: d3.select(this).attr('y')});
+  });
+};
 
-//   this.attr('x', randx).attr('y', randy);
-
-// }, 1000)
+detectCollision();
+console.log(asteroidPositions);
