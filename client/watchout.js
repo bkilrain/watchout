@@ -53,11 +53,13 @@ asteroids
 
 
 var collision = d3.dispatch('collideEvent');
-collision.on('collideEvent', function() {
-  console.log('collision motherfucker!!');
-});
 
-var inCollision = false;
+collision.on('collideEvent', function() {
+  isCollision = true
+  console.log('collision motherfucker!!');
+  setTimeout(function() { isCollision = false }, 2000);
+});
+var isCollision = false;
 var detectCollision = function () {
   var asteroidPositions = [];
   var cxs = d3.select('svg').selectAll('.update').each(function() {
@@ -66,7 +68,7 @@ var detectCollision = function () {
   var playerPosition = [player.attr('cx'), player.attr('cy')];
   for (var i = 0; i < asteroidPositions.length; i++) {
     if (Math.sqrt(Math.pow(playerPosition[0] - asteroidPositions[i][0] + 25, 2) + Math.pow(playerPosition[1] - asteroidPositions[i][1] + 25, 2)) < 50) {
-      inCollision = true;
+      if (!isCollision)
       collision.collideEvent();
     }
   }
@@ -82,5 +84,6 @@ setInterval(function () {
     .attr('x', function(d) { return d.x; })
     .attr('y', function(d) { return d.y; });
 }, 1000);
+  
 
-setInterval(detectCollision, 50);
+var startCheckingCollissions = setInterval(detectCollision, 50);
