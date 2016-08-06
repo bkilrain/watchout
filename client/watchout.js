@@ -51,19 +51,20 @@ asteroids
   .attr('height', '50px')
   .attr('width', '50px');
 
-
+var isCollision = false;
 var collision = d3.dispatch('collideEvent');
-
+var count = 0;
 collision.on('collideEvent', function() {
   isCollision = true
-  console.log('collision motherfucker!!');
+  count++;
+  d3.select('.collisions').select('span').text(count);
   player.style('fill', 'red');
   player.transition().duration(2000).style('fill', 'black');
   setTimeout(function() { 
     isCollision = false 
   }, 2000);
 });
-var isCollision = false;
+
 var detectCollision = function () {
   var asteroidPositions = [];
   var cxs = d3.select('svg').selectAll('.update').each(function() {
